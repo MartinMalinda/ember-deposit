@@ -58,11 +58,7 @@ export default Ember.Service.extend({
       return serializedModel;
     });
 
-    if(peekedRecord){
-      return peekedRecord;
-    }
-    
-    return fetchedRecord;
+    return peekedRecord || fetchedRecord;
   },
 
   // hasRecordForId(modelName, id){
@@ -77,17 +73,33 @@ export default Ember.Service.extend({
     return A(this.peekAll(modelName)).findBy('id', id);
   },
 
-  // query(modelName, params){
+  getQueryKey(modelName, params){
+    const adapter = this.get('adapter');
+    const queryString = adapter.serializeParams(params);
+    return `${modelName}-${queryString}`;
+  },
 
-  // },
+  query(modelName, params){
+
+    const serializer = this.get('serializer');
+    const peekedQuery = this.peekQuery(modelName, params);
+
+    const fetchedQuery = this.get('adapter').query(modelName, params).then(queryResponse => {
+      const serializedRecords = serializer.serializeArrayResponse(queryResponse);
+      return serializedRecords;
+    });
+
+    return peekedQuery || fetchedQuery;
+  },
 
   queryRecord(){
 
   },
 
-  // peekQuery(modelName, params){
-
-  // },
+  peekQuery(modelName, params){
+    const key = this.getQueryKey(modelName, params);
+    return this.get(`_queries.${key}`);
+  },
 
   unloadRecord(){
 
