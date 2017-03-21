@@ -1,5 +1,4 @@
 import Ember from 'ember';
-// import fetch from "ember-network/fetch";
 import {pluralize} from 'ember-inflector';
 
 
@@ -10,14 +9,8 @@ export default Ember.Service.extend({
   //host: '',
   //namespace: ''
 
-  fetch(url){
+  doGET(url){
     return $.get(url);
-  },
-
-  init(){
-    this._super(...arguments);
-
-    this.inflector = new Ember.Inflector(Ember.Inflector.defaultRules);
   },
 
   baseURL: computed('host', function(){
@@ -31,7 +24,7 @@ export default Ember.Service.extend({
 
   findAll(modelName){
     let url = this.urlForFindAll(modelName);
-    return this.fetch(url);
+    return this.doGET(url);
   },
 
   urlForFindRecord(modelName, id){
@@ -41,7 +34,7 @@ export default Ember.Service.extend({
 
   findRecord(modelName, id){
     let url = this.urlForFindRecord(modelName, id);
-    return this.fetch(url);
+    return this.doGET(url);
   },
 
   serializeParams(params){
@@ -54,7 +47,7 @@ export default Ember.Service.extend({
   },
 
   query(modelName, params){
-    return this.fetch(this.urlForQuery(modelName, params));
+    return this.doGET(this.urlForQuery(modelName, params));
   },
 
   queryRecord(/* modelName, params */){
