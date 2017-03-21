@@ -24,7 +24,9 @@ export default function() {
 
 
     // this.post('/posts');
-    // this.get('/posts/:id');
+    this.get('/posts/:id', (schema, {params}) => {
+      return schema.find('post', params.id);
+    });
     // this.put('/posts/:id'); // or this.patch
     // this.del('/posts/:id');
 

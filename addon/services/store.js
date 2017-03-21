@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-const {inject} = Ember;
+const {inject, A} = Ember;
 
 export default Ember.Service.extend({
 
@@ -30,8 +30,10 @@ export default Ember.Service.extend({
   findAll(modelName){
     const fetchAll = this.get('adapter').findAll(modelName).then(findAllResponse => {
       let serializedModels = this.get('serializer').serializeArrayResponse(findAllResponse);
+
       this.set(`_data.${modelName}`, serializedModels);
       this.set(`_resources.${modelName}`, {didFindAll: true});
+
       return serializedModels;
     });
 
@@ -44,11 +46,16 @@ export default Ember.Service.extend({
 
   findRecord(modelName, id){
     const peekedRecord = this.peekRecord(modelName, id);
-    const fetchedRecord = this.get('adapter').findRecord(modelName, id).then(model => {
+    const fetchedRecord = this.get('adapter').findRecord(modelName, id).then(findRecordResponse => {
       // TODO: create a an object with IDs as keys to avoid findBy
+
+      const serializedModel = this.get('serializer').serializeSingleResponse(findRecordResponse);
+
       if(peekedRecord){
-        peekedRecord.setProperties(model);
+        peekedRecord.setProperties(serializedModel);
       }
+
+      return serializedModel;
     });
 
     if(peekedRecord){
@@ -67,7 +74,7 @@ export default Ember.Service.extend({
   },
 
   peekRecord(modelName, id){
-    return this.peekAll(modelName).findBy('id', id);
+    return A(this.peekAll(modelName)).findBy('id', id);
   },
 
   // query(modelName, params){

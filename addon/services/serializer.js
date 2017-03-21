@@ -10,7 +10,7 @@ export default Ember.Service.extend({
     return resource.attributes;
   },
 
-  serializeSingleResponse(){
-
+  serializeSingleResponse(singleResponse){
+    return this.serializeSingleResource(singleResponse.data);
   }
 });
