@@ -8,6 +8,7 @@ export default function(  server  ) {
   */
 
   let posts = server.createList('post', 10);
+  let categories = server.createList('category', 5);
 
   
 }
