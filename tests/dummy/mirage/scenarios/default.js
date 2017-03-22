@@ -1,4 +1,4 @@
-export default function( /* server */ ) {
+export default function(  server  ) {
 
   /*
     Seed your development database using your factories.
@@ -6,5 +6,8 @@ export default function( /* server */ ) {
 
     Make sure to define a factory for each model you want to create.
   */
+
+  let posts = server.createList('post', 10);
+
   
 }

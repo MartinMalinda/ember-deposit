@@ -2,15 +2,17 @@ import Ember from 'ember';
 import {pluralize} from 'ember-inflector';
 
 
-const {computed, $} = Ember;
+const {computed, $, inject} = Ember;
 
 export default Ember.Service.extend({
 
   //host: '',
   //namespace: ''
 
+  ajax: inject.service(),
+
   doGET(url){
-    return $.get(url);
+    return this.get('ajax').request(url);
   },
 
   baseURL: computed('host', function(){

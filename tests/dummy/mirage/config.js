@@ -1,36 +1,38 @@
+import {pluralize} from 'ember-inflector';
+
 export default function() {
-
-  // These comments are here to help you get started. Feel free to delete them.
-
-  /*
-    Config (with defaults).
-
-    Note: these only affect routes defined *after* them!
-  */
 
   // this.urlPrefix = 'http://localhost:7357';    // make this `http://localhost:8080`, for example, if your API is on a different server
   // this.namespace = '';    // make this `/api`, for example, if your API is namespaced
   // this.timing = 400;      // delay for each request, automatically set to 0 during testing
 
-  
-    // Shorthand cheatsheet:
 
+  let endpoints = ['post'];
 
-    this.get('/posts', () => {
-      // debugger;
-      return this.createList('post', 10);
-      // return this.schema.posts.all();
+  endpoints.forEach(endpoint => {
+      let plural = pluralize(endpoint);
+
+    // findAll
+    this.get(`/${plural}`, (schema, request) => {
+      let params = Object.keys(request.queryParams);
+      if(params.length === 0){
+        return schema[plural].all();
+      }
+
+      if(params[0] === 'ids'){
+        // coalesce find requests
+        return schema[plural].find(request.queryParams['ids']);
+      }
+      return schema[plural].where(request.queryParams);
+    });
+    // findOne
+    this.get(`/${plural}/:id`, (schema, {params: {id: id}}) => {
+      return schema[plural].find(id);
     });
 
-
-    // this.post('/posts');
-    this.get('/posts/:id', (schema, {params}) => {
-      return schema.find('post', params.id);
+    this.delete(`/${plural}/:id`, (schema, {params: {id: id}}) => {
+      return schema[plural].find(id).destroy();
     });
-    // this.put('/posts/:id'); // or this.patch
-    // this.del('/posts/:id');
+  });
 
-
-    // http://www.ember-cli-mirage.com/docs/v0.2.x/shorthands/
-  
 }

@@ -3,7 +3,8 @@ import { startMirage } from 'dummy/initializers/ember-cli-mirage';
 
 moduleFor('service:adapter', 'Unit | Service | adapter', {
   // Specify the other units that are required for this test.
-  // needs: ['service:foo']
+  needs: ['service:ajax'],
+  
   beforeEach() {
     this.server = startMirage();
   },
