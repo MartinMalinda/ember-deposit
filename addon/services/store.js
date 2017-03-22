@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-const {inject, A, isArray} = Ember;
+const {inject, A, isArray, Logger} = Ember;
 const {resolve: resolveP} = Ember.RSVP;
 
 export default Ember.Service.extend({
@@ -42,7 +42,7 @@ export default Ember.Service.extend({
     let factory = Ember.getOwner(this).factoryFor(`model:${modelName}`);
 
     if(!factory){
-      throw new Error(`Model for ${modelName} not found`);
+      Logger.error(`Model for ${modelName} not found`);
     }
 
     this._factories[modelName] = factory;
@@ -54,7 +54,7 @@ export default Ember.Service.extend({
     const Model = this.modelFor(modelName);
 
     if(isArray(serializedResponse)){
-      return serializedResponse.map(Model.create);
+      return serializedResponse.map(obj => Model.create(obj));
     }
 
     return Model.create(serializedResponse);
@@ -63,6 +63,7 @@ export default Ember.Service.extend({
   findAll(modelName){
     const fetchAll = this.get('adapter').findAll(modelName).then(findAllResponse => {
       let models = this._getModelsForResponse(modelName, findAllResponse);
+
       this.set(`_data.${modelName}`, A(models));
       this.set(`_resourceInfo.${modelName}`, {didFindAll: true});
 
@@ -70,7 +71,7 @@ export default Ember.Service.extend({
     });
 
     if(this._resourceInfo[modelName] && this._resourceInfo[modelName].didFindAll){
-      return this.peekAll(modelName);
+      return resolveP(this.peekAll(modelName));
     }
 
     return fetchAll;
@@ -93,15 +94,24 @@ export default Ember.Service.extend({
 
     });
 
-    return resolveP(peekedRecord) || fetchedRecord;
+    return peekedRecord ? resolveP(peekedRecord) : fetchedRecord;
   },
 
-  // hasRecordForId(modelName, id){
+  hasRecordForId(modelName, id){
 
-  // },
+  },
 
   peekAll(modelName){
-    return this.getWithDefault(`_data.${modelName}`, A([]));
+    let collection = this.get(`_data.${modelName}`);
+
+    if(collection){
+      return collection;
+    }
+
+    let array = A([]);
+    this.set(`_data.${modelName}`, array);
+
+    return array;
   },
 
   peekRecord(modelName, id){
@@ -132,7 +142,7 @@ export default Ember.Service.extend({
       return models;
     });
 
-    return resolveP(peekedQuery) || fetchedQuery;
+    return peekedQuery ? resolveP(peekedQuery) : fetchedQuery;
   },
 
   queryRecord(){
@@ -142,6 +152,11 @@ export default Ember.Service.extend({
   peekQuery(modelName, params){
     const key = this._getQueryKey(modelName, params);
     return this.get(`_queries.${key}`);
+  },
+
+  createRecord(modelName, dataHash){
+    let model = this.modelFor(modelName).create(dataHash);
+    return this.peekAll(modelName).pushObject(model);
   },
 
   unloadRecord(){

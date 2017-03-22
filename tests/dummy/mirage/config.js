@@ -7,7 +7,7 @@ export default function() {
   // this.timing = 400;      // delay for each request, automatically set to 0 during testing
 
 
-  let endpoints = ['post', 'category'];
+  let endpoints = ['post', 'category', 'tag'];
 
   endpoints.forEach(endpoint => {
       let plural = pluralize(endpoint);
