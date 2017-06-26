@@ -1,5 +1,14 @@
 # ember-deposit
 
+Data layer for reading data from REST/JSON API.
+Currently debugged only for my one specific usecase.
+API is mostly similar to Ember data apart from a few differences.
+`store.query` is cached.
+Background reloading is partially implemented but not thoroughly tested.
+Models are expected to be regular Ember Objects.
+Currently no support for relationships. Since the usecase for this addon is to only read, not write, it is quite easy to manage them up via computed properties.
+
+
 This README outlines the details of collaborating on this Ember addon.
 
 ## Installation
