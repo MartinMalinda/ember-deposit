@@ -8,30 +8,37 @@ export default Ember.Service.extend({
   adapter: inject.service(),
   serializer: inject.service(),
 
-  _data: {
-    /*
-      someModelName: [],
-    */
-  },
+  init() {
 
-  _resourceInfo: {
-    /*
-      someModelName: {
-        didFindAll: true/false
+    this.setProperties({
+      _data: {
+        /*
+          someModelName: [],
+        */
+      },
+
+      _resourceInfo: {
+        /*
+          someModelName: {
+            didFindAll: true/false
+          }
+        */
+      },
+
+      _queries: {
+        /*
+          modelName-paramString: []
+        */
+      },
+
+      _factories: {
+        /*
+          modelName: {}
+        */
       }
-    */
-  },
+    });
 
-  _queries: {
-    /*
-      modelName-paramString: []
-    */
-  },
-
-  _factories: {
-    /*
-      modelName: {}
-    */
+    this._super(...arguments);
   },
 
   modelFor(modelName){
