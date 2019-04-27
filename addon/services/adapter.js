@@ -1,8 +1,7 @@
 import Ember from 'ember';
 import {pluralize} from 'ember-inflector';
 
-
-const {computed, $, inject} = Ember;
+const {computed, inject} = Ember;
 
 export default Ember.Service.extend({
 
