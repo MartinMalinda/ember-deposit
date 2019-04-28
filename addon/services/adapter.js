@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import {pluralize} from 'ember-inflector';
+import param from 'ember-deposit/utils/param';
 
 const {computed, inject} = Ember;
 
@@ -39,7 +40,7 @@ export default Ember.Service.extend({
   },
 
   serializeParams(params){
-    return $.param(params);
+    return param(params);
   },
 
   urlForQuery(modelName, params){
